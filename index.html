@@ -19,8 +19,8 @@
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             border-radius: 16px;
         }
 
@@ -36,8 +36,8 @@
         .glass-input:focus {
             outline: none;
             background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
         }
 
         .orb {
@@ -55,34 +55,33 @@
             border-color: #a855f7;
         }
 
-        .progress-bar-inner {
-            transition: width 0.3s ease;
-            box-shadow: 0 0 15px #a855f7;
-        }
-
         .hidden { display: none; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Aesthetic Background -->
     <div class="orb bg-purple-600 top-[-20%] left-[-20%]"></div>
     <div class="orb bg-blue-600 bottom-[-20%] right-[-20%]"></div>
 
-    <!-- Auth Container -->
+    <!-- Auth Layer -->
     <div id="authSection" class="min-h-screen flex items-center justify-center p-6">
         <div class="glass w-full max-w-md p-10 text-center">
             <div class="mb-8">
                 <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-purple-500/30">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
                 </div>
-                <h1 class="text-3xl font-black tracking-tight">STUDIO ACCESS</h1>
-                <p class="text-white/40 text-sm mt-2">Enter your credentials to manage Zelvior</p>
+                <h1 class="text-3xl font-black tracking-tight">STUDIO LOGIN</h1>
+                <p class="text-white/40 text-sm mt-2">Manage your artistic portfolio</p>
             </div>
             <form id="loginForm" class="space-y-4">
-                <input type="email" id="email" placeholder="Email Address" class="w-full glass-input" required>
+                <input type="email" id="email" placeholder="Email" class="w-full glass-input" required>
                 <input type="password" id="password" placeholder="Password" class="w-full glass-input" required>
-                <button type="submit" class="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-purple-500 hover:text-white transition-all duration-300 transform active:scale-95">
+                <button type="submit" id="loginBtn" class="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300">
                     AUTHORIZE
                 </button>
             </form>
@@ -90,88 +89,91 @@
         </div>
     </div>
 
-    <!-- Dashboard Container -->
+    <!-- Dashboard Layer -->
     <div id="dashboardSection" class="hidden min-h-screen pb-24">
-        <nav class="p-6">
+        <nav class="p-6 border-b border-white/5">
             <div class="max-w-6xl mx-auto flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 glass flex items-center justify-center border-purple-500/50">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                     </div>
-                    <span class="font-black text-xl tracking-tighter">ZELVIOR <span class="text-purple-500">ADMIN</span></span>
+                    <span class="font-black text-xl tracking-tighter uppercase">Zelvior <span class="text-purple-500">Studio</span></span>
                 </div>
-                <button id="logoutBtn" class="glass px-4 py-2 text-sm flex items-center gap-2 hover:bg-red-500/20 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                    Sign Out
+                <button id="logoutBtn" class="glass px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-red-500/20 transition-colors">
+                    Log Out
                 </button>
             </div>
         </nav>
 
-        <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        <main class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+            <!-- Upload Column -->
             <div class="lg:col-span-1">
                 <div class="glass p-8 sticky top-8">
-                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                        Upload Masterpiece
+                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                        Add New Work
                     </h2>
                     
-                    <div id="dropZone" class="border-2 border-dashed border-white/10 rounded-2xl p-8 text-center cursor-pointer transition-all mb-6">
+                    <div id="dropZone" class="border-2 border-dashed border-white/10 rounded-2xl p-6 text-center cursor-pointer hover:border-purple-500/50 transition-all mb-6 bg-white/5">
                         <input type="file" id="fileInput" class="hidden" accept="image/*">
                         <div id="uploadPlaceholder">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 opacity-20"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                            <p class="text-xs text-white/40">Direct database upload</p>
+                            <p class="text-xs text-white/40">Drop image or click to browse</p>
                         </div>
                         <div id="filePreview" class="hidden">
-                            <p class="text-purple-400 text-sm font-bold truncate" id="fileNameText"></p>
+                            <div class="w-full h-32 rounded-lg overflow-hidden mb-2 bg-black/20">
+                                <img id="previewImg" class="w-full h-full object-cover">
+                            </div>
+                            <p class="text-purple-400 text-[10px] font-bold truncate" id="fileNameText"></p>
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <input type="text" id="artTitle" placeholder="Artwork Title" class="w-full glass-input">
-                        <textarea id="artDesc" placeholder="Description..." class="w-full glass-input h-24 resize-none"></textarea>
+                        <textarea id="artDesc" placeholder="Brief description..." class="w-full glass-input h-24 resize-none text-sm"></textarea>
                         
-                        <div id="loadingIndicator" class="hidden">
-                            <div class="flex items-center gap-2 text-[10px] text-purple-400 font-bold mb-2 animate-pulse">
-                                <svg class="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                        <div id="loadingIndicator" class="hidden py-2">
+                            <div class="flex items-center justify-center gap-2 text-[10px] text-purple-400 font-bold animate-pulse">
+                                <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                ENCODING & SAVING...
+                                UPLOADING TO DATABASE...
                             </div>
                         </div>
 
-                        <button id="publishBtn" class="w-full py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition-all disabled:opacity-50">
-                            PUBLISH TO DATABASE
+                        <button id="publishBtn" class="w-full py-4 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition-all disabled:opacity-30">
+                            PUBLISH WORK
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- List Column -->
             <div class="lg:col-span-2">
-                <div class="glass p-8">
-                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/></svg>
-                        Manage Collection
-                    </h2>
-                    <div id="itemsContainer" class="space-y-4"></div>
+                <div class="glass p-8 min-h-[400px]">
+                    <h2 class="text-lg font-bold mb-6">Active Gallery</h2>
+                    <div id="itemsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Content via JS -->
+                    </div>
                 </div>
             </div>
         </main>
 
-        <footer class="fixed bottom-6 left-1/2 -translate-x-1/2">
-            <div class="glass px-6 py-2 text-[10px] tracking-[0.3em] font-black opacity-60">BY ZELVIOR</div>
+        <footer class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+            <div class="glass px-6 py-2 text-[10px] tracking-[0.4em] font-black opacity-40">BY ZELVIOR</div>
         </footer>
     </div>
 
+    <!-- Toast -->
     <div id="toast" class="fixed top-6 right-6 z-[100] translate-x-[200%] transition-transform duration-500">
         <div class="glass px-6 py-4 flex items-center gap-3 border-l-4 border-l-purple-500">
-            <span id="toastMessage"></span>
+            <span id="toastMessage" class="text-sm font-medium"></span>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
@@ -191,89 +193,92 @@
 
         const authSection = document.getElementById('authSection');
         const dashboardSection = document.getElementById('dashboardSection');
-        const loginForm = document.getElementById('loginForm');
         const itemsContainer = document.getElementById('itemsContainer');
-        const dropZone = document.getElementById('dropZone');
         const fileInput = document.getElementById('fileInput');
 
-        let selectedFile = null;
+        let selectedFileBase64 = null;
 
+        // --- AUTH FLOW ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 authSection.classList.add('hidden');
                 dashboardSection.classList.remove('hidden');
-                loadDashboardData();
+                initGalleryListener();
             } else {
                 authSection.classList.remove('hidden');
                 dashboardSection.classList.add('hidden');
             }
         });
 
-        loginForm.onsubmit = async (e) => {
+        document.getElementById('loginForm').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                await signInWithEmailAndPassword(auth, email.value, password.value);
             } catch (err) {
                 const errEl = document.getElementById('loginError');
-                errEl.innerText = "Access denied.";
+                errEl.innerText = "Unauthorized. Please check your credentials.";
                 errEl.classList.remove('hidden');
+                btn.disabled = false;
             }
         };
 
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
-        dropZone.onclick = () => fileInput.click();
-        fileInput.onchange = (e) => handleFile(e.target.files[0]);
+        // --- FILE HANDLING ---
+        document.getElementById('dropZone').onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        function handleFile(file) {
-            if (!file || !file.type.startsWith('image/')) return;
-            // Note: Large images (over 1MB) might hit Firestore's document limit.
-            if (file.size > 800000) {
-                showToast("Image too large. Keep under 800KB.");
+            if (file.size > 900000) {
+                showToast("File exceeds 900KB. Please compress it.");
                 return;
             }
-            selectedFile = file;
-            document.getElementById('uploadPlaceholder').classList.add('hidden');
-            document.getElementById('filePreview').classList.remove('hidden');
-            document.getElementById('fileNameText').innerText = file.name;
-        }
 
-        const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
+            reader.onload = (event) => {
+                selectedFileBase64 = event.target.result;
+                document.getElementById('uploadPlaceholder').classList.add('hidden');
+                document.getElementById('filePreview').classList.remove('hidden');
+                document.getElementById('previewImg').src = selectedFileBase64;
+                document.getElementById('fileNameText').innerText = file.name;
+            };
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
+        };
 
+        // --- DATABASE OPERATIONS ---
         document.getElementById('publishBtn').onclick = async () => {
-            const title = document.getElementById('artTitle').value;
-            const desc = document.getElementById('artDesc').value;
+            const title = document.getElementById('artTitle').value.trim();
+            const desc = document.getElementById('artDesc').value.trim();
 
-            if (!selectedFile || !title) return showToast("File & Title required.");
+            if (!selectedFileBase64 || !title) {
+                showToast("Image and Title are required.");
+                return;
+            }
 
-            const loader = document.getElementById('loadingIndicator');
             const btn = document.getElementById('publishBtn');
+            const loader = document.getElementById('loadingIndicator');
 
             btn.disabled = true;
             loader.classList.remove('hidden');
 
             try {
-                const base64String = await toBase64(selectedFile);
-                
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'portfolio_items'), {
+                // IMPORTANT: Following strict path rules
+                const collectionPath = `artifacts/${appId}/public/data/portfolio_items`;
+                await addDoc(collection(db, collectionPath), {
                     title,
                     description: desc,
-                    imageUrl: base64String, // Saved directly to database
+                    imageUrl: selectedFileBase64,
                     createdAt: serverTimestamp()
                 });
 
-                showToast("PUBLISHED TO DATABASE");
+                showToast("Artwork Live!");
                 resetForm();
             } catch (err) {
-                console.error(err);
-                showToast("Database error.");
+                console.error("Firestore Error:", err);
+                showToast("Database Error: Check Firebase Rules.");
                 btn.disabled = false;
             } finally {
                 loader.classList.add('hidden');
@@ -283,40 +288,60 @@
         function resetForm() {
             document.getElementById('artTitle').value = "";
             document.getElementById('artDesc').value = "";
-            selectedFile = null;
+            document.getElementById('fileInput').value = "";
+            selectedFileBase64 = null;
             document.getElementById('uploadPlaceholder').classList.remove('hidden');
             document.getElementById('filePreview').classList.add('hidden');
             document.getElementById('publishBtn').disabled = false;
         }
 
-        function loadDashboardData() {
+        function initGalleryListener() {
+            // No complex queries (Rule 2)
             const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'portfolio_items');
+            
             onSnapshot(colRef, (snapshot) => {
-                itemsContainer.innerHTML = snapshot.docs.map(docSnap => {
+                // Sort in memory (Rule 2)
+                const sortedDocs = snapshot.docs.sort((a, b) => {
+                    const timeA = a.data().createdAt?.seconds || 0;
+                    const timeB = b.data().createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                itemsContainer.innerHTML = sortedDocs.map(docSnap => {
                     const data = docSnap.data();
                     return `
-                        <div class="glass p-4 flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-4">
-                                <img src="${data.imageUrl}" class="w-12 h-12 rounded object-cover bg-black/40">
-                                <div>
-                                    <p class="font-bold text-sm">${data.title}</p>
-                                    <p class="text-[9px] opacity-40 uppercase">Stored in DB</p>
-                                </div>
+                        <div class="glass p-3 flex flex-col gap-3 group">
+                            <div class="aspect-square rounded-lg overflow-hidden bg-black/40 relative">
+                                <img src="${data.imageUrl}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                                <button onclick="window.deleteItem('${docSnap.id}')" class="absolute top-2 right-2 p-2 bg-red-500/80 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                </button>
                             </div>
-                            <button onclick="window.deleteItem('${docSnap.id}')" class="p-2 hover:text-red-500 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                            </button>
+                            <div>
+                                <h3 class="font-bold text-xs truncate">${data.title}</h3>
+                                <p class="text-[9px] text-white/30 truncate mt-1">${data.description || 'No description'}</p>
+                            </div>
                         </div>
                     `;
                 }).join('');
-                if(snapshot.empty) itemsContainer.innerHTML = `<p class="text-center opacity-20 py-10 text-xs">COLLECTION EMPTY</p>`;
+
+                if(snapshot.empty) {
+                    itemsContainer.innerHTML = `<div class="col-span-full py-20 text-center opacity-20 text-xs tracking-widest font-black uppercase">Studio Gallery Empty</div>`;
+                }
+            }, (err) => {
+                console.error("Listener failed:", err);
+                showToast("Critical: Permission Denied.");
             });
         }
 
         window.deleteItem = async (id) => {
-            if (confirm("Delete permanently?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_items', id));
-                showToast("REMOVED");
+            if (!confirm("Delete this artwork?")) return;
+            try {
+                const docPath = `artifacts/${appId}/public/data/portfolio_items/${id}`;
+                await deleteDoc(doc(db, docPath));
+                showToast("Item Deleted");
+            } catch (err) {
+                showToast("Failed to delete.");
             }
         };
 
@@ -324,7 +349,7 @@
             const toast = document.getElementById('toast');
             document.getElementById('toastMessage').innerText = msg;
             toast.style.transform = "translateX(0)";
-            setTimeout(() => toast.style.transform = "translateX(200%)", 3000);
+            setTimeout(() => { toast.style.transform = "translateX(200%)"; }, 3000);
         }
     </script>
 </body>
