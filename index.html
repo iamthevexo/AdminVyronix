@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZELVIOR | Admin Studio</title>
+    <title>VYRONIX | Admin Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -76,13 +76,13 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
                 </div>
                 <h1 class="text-3xl font-black tracking-tight">STUDIO LOGIN</h1>
-                <p class="text-white/40 text-sm mt-2">Manage your artistic portfolio</p>
+                <p class="text-white/40 text-sm mt-2">Manage your digital portfolio</p>
             </div>
             <form id="loginForm" class="space-y-4">
                 <input type="email" id="email" placeholder="Email" class="w-full glass-input" required>
                 <input type="password" id="password" placeholder="Password" class="w-full glass-input" required>
                 <button type="submit" id="loginBtn" class="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-purple-600 hover:text-white transition-all duration-300">
-                    AUTHORIZE
+                    ACCESS
                 </button>
             </form>
             <p id="loginError" class="text-red-400 text-xs mt-4 hidden"></p>
@@ -97,7 +97,7 @@
                     <div class="w-10 h-10 glass flex items-center justify-center border-purple-500/50">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
                     </div>
-                    <span class="font-black text-xl tracking-tighter uppercase">Zelvior <span class="text-purple-500">Studio</span></span>
+                    <span class="font-black text-xl tracking-tighter uppercase">VYRONIX <span class="text-purple-500">Studio</span></span>
                 </div>
                 <button id="logoutBtn" class="glass px-4 py-2 text-xs font-bold uppercase tracking-widest hover:bg-red-500/20 transition-colors">
                     Log Out
@@ -111,7 +111,7 @@
                 <div class="glass p-8 sticky top-8">
                     <h2 class="text-lg font-bold mb-6 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                        Add New Work
+                        Add New
                     </h2>
                     
                     <div id="dropZone" class="border-2 border-dashed border-white/10 rounded-2xl p-6 text-center cursor-pointer hover:border-purple-500/50 transition-all mb-6 bg-white/5">
@@ -137,12 +137,12 @@
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                                SAVING TO REALTIME DB...
+                                SAVING TO DATABASE...
                             </div>
                         </div>
 
                         <button id="publishBtn" class="w-full py-4 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition-all disabled:opacity-30">
-                            PUBLISH WORK
+                            PUBLISH
                         </button>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
             <!-- List Column -->
             <div class="lg:col-span-2">
                 <div class="glass p-8 min-h-[400px]">
-                    <h2 class="text-lg font-bold mb-6">Active Gallery</h2>
+                    <h2 class="text-lg font-bold mb-6">Gallery</h2>
                     <div id="itemsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Content via JS -->
                     </div>
@@ -160,7 +160,7 @@
         </main>
 
         <footer class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-            <div class="glass px-6 py-2 text-[10px] tracking-[0.4em] font-black opacity-40">BY ZELVIOR</div>
+            <div class="glass px-6 py-2 text-[10px] tracking-[0.4em] font-black opacity-40">BY VYRONIX</div>
         </footer>
     </div>
 
