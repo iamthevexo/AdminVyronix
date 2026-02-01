@@ -235,9 +235,9 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            // Note: RTDB can handle larger nodes, but browser performance degrades with huge strings
-            if (file.size > 1024 * 1024) { 
-                showToast("File is too large (>1MB).");
+            // Updated limit: 10MB (10 * 1024 * 1024 bytes)
+            if (file.size > 10 * 1024 * 1024) { 
+                showToast("File is too large (>10MB).");
                 return;
             }
 
@@ -311,7 +311,6 @@
                     return;
                 }
 
-                // Convert object to array and sort by time (RTDB doesn't guarantee order on onValue)
                 const items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
