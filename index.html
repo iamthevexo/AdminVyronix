@@ -118,6 +118,7 @@
                         <input type="file" id="fileInput" class="hidden" accept="image/*">
                         <div id="uploadPlaceholder">
                             <p class="text-xs text-white/40">Drop image or click to browse</p>
+                            <p class="text-[9px] text-white/20 mt-1 uppercase tracking-widest">Max 10MB</p>
                         </div>
                         <div id="filePreview" class="hidden">
                             <div class="w-full h-32 rounded-lg overflow-hidden mb-2 bg-black/20">
@@ -196,6 +197,7 @@
         const dashboardSection = document.getElementById('dashboardSection');
         const itemsContainer = document.getElementById('itemsContainer');
         const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
 
         let selectedFileBase64 = null;
 
@@ -230,13 +232,33 @@
         document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
         // --- FILE HANDLING ---
-        document.getElementById('dropZone').onclick = () => fileInput.click();
-        fileInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        dropZone.onclick = () => fileInput.click();
+        
+        // Drag & Drop logic for visual state
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        };
+        dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        };
 
-            // Updated limit: 10MB (10 * 1024 * 1024 bytes)
-            if (file.size > 10 * 1024 * 1024) { 
+        fileInput.onchange = (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        };
+
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showToast("Please select an image file.");
+                return;
+            }
+
+            // Updated limit to 10MB
+            const limit = 10 * 1024 * 1024;
+            if (file.size > limit) { 
                 showToast("File is too large (>10MB).");
                 return;
             }
@@ -250,7 +272,7 @@
                 document.getElementById('fileNameText').innerText = file.name;
             };
             reader.readAsDataURL(file);
-        };
+        }
 
         // --- DATABASE OPERATIONS ---
         document.getElementById('publishBtn').onclick = async () => {
@@ -269,7 +291,6 @@
             loader.classList.remove('hidden');
 
             try {
-                // Using RTDB structure
                 const portfolioRef = ref(db, `artifacts/${appId}/public/portfolio_items`);
                 const newItemRef = push(portfolioRef);
                 
