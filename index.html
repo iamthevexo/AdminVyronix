@@ -142,7 +142,7 @@
                             </div>
                         </div>
 
-                        <button id="publishBtn" class="w-full py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition-all disabled:opacity-50">
+                        <button id="publishBtn" class="w-full py-3 bg-purple-600 hover:bg-purple-500 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                             PUBLISH TO PORTFOLIO
                         </button>
                     </div>
@@ -246,7 +246,10 @@
         fileInput.onchange = (e) => handleFile(e.target.files[0]);
 
         function handleFile(file) {
-            if (!file || !file.type.startsWith('image/')) return;
+            if (!file || !file.type.startsWith('image/')) {
+                showToast("Please select a valid image file.");
+                return;
+            }
             selectedFile = file;
             document.getElementById('uploadPlaceholder').classList.add('hidden');
             document.getElementById('filePreview').classList.remove('hidden');
@@ -257,7 +260,8 @@
             const title = document.getElementById('artTitle').value;
             const desc = document.getElementById('artDesc').value;
 
-            if (!selectedFile || !title) return showToast("File and Title required.");
+            if (!selectedFile) return showToast("No file selected.");
+            if (!title) return showToast("Title is required.");
 
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
@@ -267,32 +271,48 @@
             btn.disabled = true;
             progressContainer.classList.remove('hidden');
 
-            const storageRef = ref(storage, `portfolio/${Date.now()}_${selectedFile.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+            try {
+                // Ensure storage path follows best practices for rules
+                const fileName = `${Date.now()}_${selectedFile.name.replace(/[^a-z0-9.]/gi, '_')}`;
+                const storagePath = `artifacts/${appId}/public/portfolio/${fileName}`;
+                const storageRef = ref(storage, storagePath);
+                
+                const uploadTask = uploadBytesResumable(storageRef, selectedFile);
 
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = progress + '%';
-                    percentText.innerText = Math.round(progress) + '%';
-                }, 
-                (error) => {
-                    showToast("Upload failed.");
-                    btn.disabled = false;
-                }, 
-                async () => {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'portfolio_items'), {
-                        title,
-                        description: desc,
-                        imageUrl: downloadURL,
-                        createdAt: serverTimestamp()
-                    });
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progressBar.style.width = progress + '%';
+                        percentText.innerText = Math.round(progress) + '%';
+                    }, 
+                    (error) => {
+                        console.error("Storage Error Detail:", error);
+                        let message = "Upload failed.";
+                        if (error.code === 'storage/unauthorized') {
+                            message = "Unauthorized: Check Firebase Storage Rules.";
+                        }
+                        showToast(message);
+                        btn.disabled = false;
+                        progressContainer.classList.add('hidden');
+                    }, 
+                    async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'portfolio_items'), {
+                            title,
+                            description: desc,
+                            imageUrl: downloadURL,
+                            createdAt: serverTimestamp()
+                        });
 
-                    showToast("ARTWORK PUBLISHED");
-                    resetForm();
-                }
-            );
+                        showToast("ARTWORK PUBLISHED");
+                        resetForm();
+                    }
+                );
+            } catch (err) {
+                console.error("Publishing Error:", err);
+                showToast("Critical Error during publish.");
+                btn.disabled = false;
+            }
         };
 
         function resetForm() {
@@ -302,6 +322,7 @@
             document.getElementById('uploadPlaceholder').classList.remove('hidden');
             document.getElementById('filePreview').classList.add('hidden');
             document.getElementById('progressContainer').classList.add('hidden');
+            document.getElementById('progressBar').style.width = '0%';
             document.getElementById('publishBtn').disabled = false;
         }
 
@@ -311,15 +332,16 @@
             onSnapshot(colRef, (snapshot) => {
                 itemsContainer.innerHTML = snapshot.docs.map(docSnap => {
                     const data = docSnap.data();
+                    const date = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString() : 'Pending...';
                     return `
                         <div class="glass p-4 flex items-center justify-between gap-4 group">
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                                <div class="w-12 h-12 rounded-lg overflow-hidden border border-white/10 bg-black/20">
                                     <img src="${data.imageUrl}" class="w-full h-full object-cover">
                                 </div>
                                 <div>
                                     <p class="font-bold text-sm">${data.title}</p>
-                                    <p class="text-[10px] text-white/40 uppercase tracking-widest">${new Date(data.createdAt?.seconds * 1000).toLocaleDateString()}</p>
+                                    <p class="text-[10px] text-white/40 uppercase tracking-widest">${date}</p>
                                 </div>
                             </div>
                             <button onclick="window.deleteItem('${docSnap.id}')" class="p-2 hover:bg-red-500/20 rounded-lg text-white/20 hover:text-red-500 transition-all">
@@ -330,13 +352,20 @@
                 }).join('');
                 
                 if(snapshot.empty) itemsContainer.innerHTML = `<div class="text-center py-10 opacity-20 text-xs tracking-widest">GALLERY IS EMPTY</div>`;
+            }, (error) => {
+                console.error("Firestore Listen Error:", error);
+                showToast("Failed to load collection.");
             });
         }
 
         window.deleteItem = async (id) => {
             if (confirm("Permanently delete this artwork?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_items', id));
-                showToast("ITEM REMOVED");
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_items', id));
+                    showToast("ITEM REMOVED");
+                } catch (err) {
+                    showToast("Delete failed. Check permissions.");
+                }
             }
         };
 
