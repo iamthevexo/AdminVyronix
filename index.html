@@ -248,6 +248,19 @@
 
         let selectedFileBase64 = null;
 
+        // --- SAFE STORAGE HELPERS ---
+        const CACHE_KEY = `vyronix_cache_${appId}`;
+        const saveToCache = (data) => {
+            try {
+                // If storing items, compact them slightly to save space
+                const compact = data ? data.map(i => ({ id: i.id, title: i.title, imageUrl: i.imageUrl })) : null;
+                localStorage.setItem(CACHE_KEY, JSON.stringify(compact));
+            } catch (e) {
+                // If it fails, we clear it so it doesn't stay in a broken state
+                localStorage.removeItem(CACHE_KEY);
+            }
+        };
+
         // --- AUTH FLOW ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -368,18 +381,21 @@
             const portfolioRef = ref(db, `artifacts/${appId}/public/portfolio_items`);
             
             onValue(portfolioRef, (snapshot) => {
-                // Remove loader and show container
                 galleryLoader.classList.add('hidden');
                 itemsContainer.classList.remove('hidden');
                 
                 const data = snapshot.val();
                 if (!data) {
                     itemsContainer.innerHTML = `<div class="col-span-full py-20 text-center opacity-20 text-xs tracking-widest font-black uppercase">Studio Gallery Empty</div>`;
+                    saveToCache(null);
                     return;
                 }
 
                 const items = Object.entries(data).map(([id, val]) => ({ id, ...val }));
                 items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                // Update cache safely
+                saveToCache(items);
 
                 itemsContainer.innerHTML = items.map(item => `
                     <div class="glass p-3 flex flex-col gap-3 group">
@@ -395,6 +411,8 @@
                         </div>
                     </div>
                 `).join('');
+            }, (error) => {
+                console.error("Firebase listen failed:", error);
             });
         }
 
