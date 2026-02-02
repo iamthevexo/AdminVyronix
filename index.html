@@ -55,7 +55,7 @@
             border-color: #a855f7;
         }
 
-        .hidden { display: none; }
+        .hidden { display: none !important; }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
@@ -152,7 +152,10 @@
             <!-- List Column -->
             <div class="lg:col-span-2">
                 <div class="glass p-8 min-h-[400px]">
-                    <h2 class="text-lg font-bold mb-6">Gallery</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold">Gallery</h2>
+                        <div id="galleryLoader" class="w-5 h-5 border-2 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
+                    </div>
                     <div id="itemsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Content via JS -->
                     </div>
@@ -198,6 +201,7 @@
         const itemsContainer = document.getElementById('itemsContainer');
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
+        const galleryLoader = document.getElementById('galleryLoader');
 
         let selectedFileBase64 = null;
 
@@ -234,7 +238,6 @@
         // --- FILE HANDLING ---
         dropZone.onclick = () => fileInput.click();
         
-        // Drag & Drop logic for visual state
         dropZone.ondragover = (e) => {
             e.preventDefault();
             dropZone.classList.add('dragover');
@@ -255,14 +258,11 @@
                 showToast("Please select an image file.");
                 return;
             }
-
-            // Updated limit to 10MB
             const limit = 10 * 1024 * 1024;
             if (file.size > limit) { 
                 showToast("File is too large (>10MB).");
                 return;
             }
-
             const reader = new FileReader();
             reader.onload = (event) => {
                 selectedFileBase64 = event.target.result;
@@ -304,7 +304,6 @@
                 showToast("Artwork Live!");
                 resetForm();
             } catch (err) {
-                console.error("RTDB Error:", err);
                 showToast("Connection Error.");
                 btn.disabled = false;
             } finally {
@@ -326,6 +325,9 @@
             const portfolioRef = ref(db, `artifacts/${appId}/public/portfolio_items`);
             
             onValue(portfolioRef, (snapshot) => {
+                // Remove loader as soon as database snapshot returns
+                galleryLoader.classList.add('hidden');
+                
                 const data = snapshot.val();
                 if (!data) {
                     itemsContainer.innerHTML = `<div class="col-span-full py-20 text-center opacity-20 text-xs tracking-widest font-black uppercase">Studio Gallery Empty</div>`;
